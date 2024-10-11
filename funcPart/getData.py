@@ -1,8 +1,8 @@
-import torch
 from torch.utils import data
 from pathlib import Path
-from torchvision import transforms
-# from torchvision import io
+
+import torchvision.transforms as vis_trans
+
 from PIL import Image
 
 def getDataPath():
@@ -21,11 +21,12 @@ def getDataPath():
     print("GetDataPath:",tempDir)
     return tempDir
 
-def imgTransfm(resize):
-    trans = [transforms.ToTensor(),]
-    if resize:
-        trans.insert(0, transforms.Resize(resize))
-    trans = transforms.Compose(trans)
+def imgTransfm(picSize):
+    trans = [vis_trans.RandomCrop(picSize,pad_if_needed=True),
+             vis_trans.RandomHorizontalFlip(),
+             vis_trans.RandomVerticalFlip(),
+             vis_trans.ToTensor()]
+    trans = vis_trans.Compose(trans)
     return trans
 
 def getTagPicPath(tags):
@@ -45,12 +46,11 @@ def getTagPicPath(tags):
 #通过创建data.Dataset子类Mydataset来创建输入
 class class_PicDataset(data.Dataset):
 # 类初始化
-    def __init__(self, resize=None,root=None):
-        self.picFiles=getDataPath()
-        self.tags=[tag for tag in (self.picFiles).iterdir() if tag.is_dir()]
+    def __init__(self, rootPath, transform):
+        self.tags=[tag for tag in rootPath.iterdir() if tag.is_dir()]
         self.imgPaths,self.labels=getTagPicPath(self.tags)
         #image transform
-        self.transfm=imgTransfm(resize)
+        self.transfm=transform
 # 进行切片
     def __getitem__(self, index):
         img=Image.open(self.imgPaths[index])
@@ -65,7 +65,7 @@ class class_PicDataset(data.Dataset):
         return [tag.name for tag in self.tags]
     
 
-def divideDataset(total,splitRatio:list):
+def divideDataset(total, splitRatio:list):
     divideNum=[int(0.1*r*total) for r in splitRatio]
     divideNum[2]=total-divideNum[0]-divideNum[1]
     return divideNum
