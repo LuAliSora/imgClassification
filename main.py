@@ -29,11 +29,22 @@ def train_main(net, train_iter, test_iter, loss, updater, num_epochs, device):
     # assert train_acc <= 1 and train_acc > 0.7, train_acc
     # assert test_acc <= 1 and test_acc > 0.7, test_acc
 
-def modelSave(epochs,model,optimizer,fileSave="modelSave.pth"):
+def modelLoad(tagNum, fileSave=baseSet.stateSave):
+    # model=ResNet.ResNet_main(input_channels=3,tagNum=tagNum).to(baseSet.device)
+    model=ResNet.ResNet_transL(tagNum=tagNum).to(baseSet.device)
+    optimizer = torch.optim.Adam(model.parameters(), lr=baseSet.lr, amsgrad=True)
+    if Path(fileSave).is_file():
+        saveState=torch.load(fileSave)
+        model.load_state_dict(saveState['model_state'], weight_only=True)
+        optimizer.load_state_dict(saveState['optim_state'], weight_only=True)
+        print("model_load!")
+    return model, optimizer
+
+def modelSave(epochs, model, optimizer, fileSave=baseSet.stateSave):
     torch.save({
         'epoch': epochs,
-        'state_dict': model.state_dict(),
-        'optim_dict': optimizer.state_dict(),
+        'model_state': model.state_dict(),
+        'optim_state': optimizer.state_dict(),
     },
         fileSave)
     # print(model.state_dict())
@@ -45,14 +56,12 @@ def main():
     train_loader=data.DataLoader(picDataset[0],batch_size=baseSet.batch_size,shuffle=True,num_workers=baseSet.num_workers)
     val_loader=data.DataLoader(picDataset[1],shuffle=True,num_workers=baseSet.num_workers)
     test_loader=data.DataLoader(picDataset[2],num_workers=baseSet.num_workers)
-    # model=ResNet.ResNet_main(input_channels=3,tagNum=len(tags)).to(baseSet.device)
-    model=ResNet.ResNet_transL(tagNum=len(tags)).to(baseSet.device)
     
     loss=nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=baseSet.lr, amsgrad=True)
-    
-    train_main(model,train_loader,val_loader,loss,optimizer,baseSet.num_epochs,baseSet.device)
-    # modelSave(baseSet.num_epochs,model,optimizer)
+    model, optimizer=modelLoad(len(tags))
+
+    train_main(model, train_loader, val_loader, loss,optimizer, baseSet.num_epochs, baseSet.device)
+    modelSave(baseSet.num_epochs, model,optimizer)
 
 if __name__=="__main__":
     main()
