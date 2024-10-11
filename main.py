@@ -34,9 +34,9 @@ def modelLoad(tagNum, fileSave=baseSet.stateSave):
     model=ResNet.ResNet_transL(tagNum=tagNum).to(baseSet.device)
     optimizer = torch.optim.Adam(model.parameters(), lr=baseSet.lr, amsgrad=True)
     if Path(fileSave).is_file():
-        saveState=torch.load(fileSave)
-        model.load_state_dict(saveState['model_state'], weight_only=True)
-        optimizer.load_state_dict(saveState['optim_state'], weight_only=True)
+        saveState=torch.load(fileSave, weights_only=True)
+        model.load_state_dict(saveState['model_state'])
+        optimizer.load_state_dict(saveState['optim_state'])
         print("model_load!")
     return model, optimizer
 
