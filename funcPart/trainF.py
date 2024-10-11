@@ -9,13 +9,12 @@ def accuracy(y_hat, y):  #@save
     # y_hat=y_hat.reshape(-1)
     # print(y.shape,y_hat.shape)
     cmp = y_hat.type(y.dtype) == y
-    # print(cmp)
+    # print("cmp,smp.shape:",cmp,cmp.shape)
     return float(cmp.type(y.dtype).sum())
 
 def val_main(net, data_iter,device):  #@save
     """计算在指定数据集上模型的精度"""
-    if isinstance(net, torch.nn.Module):
-        net.eval()  # 将模型设置为评估模式
+    net.eval()  # 将模型设置为评估模式
     metric = classSet.Accumulator(2)  # 正确预测数、预测总数
     with torch.no_grad():
         for i,data in enumerate(data_iter):#
@@ -27,15 +26,14 @@ def train_epoch(net, train_iter, loss, updater,device):  #@save
 
     """训练模型一个迭代周期（定义见第3章）"""
     # 将模型设置为训练模式
-    if isinstance(net, torch.nn.Module):
-        net.train()
+    net.train()
     # 训练损失总和、训练准确度总和、样本数
     metric = classSet.Accumulator(3)
     # print("device:",device)
     for i,data in enumerate(train_iter):#
         # 计算梯度并更新参数
-        X=data[0].to(device)#
-        y=data[1].to(device)#
+        X=data[0].to(device)
+        y=data[1].to(device)
         y_hat = net(X)
         # print(X.device,y.device)
         # print("X.shape:",X.shape,"y_hat.shape:",y_hat.shape,"y.shape:",y.shape)
