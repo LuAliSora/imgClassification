@@ -2,7 +2,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-
+import torchvision
 
 class Residual(nn.Module):  #@save
     def __init__(self, input_channels, num_channels,
@@ -35,7 +35,7 @@ class Residual(nn.Module):  #@save
         return F.relu(Y)
 
 class ResNet_main(nn.Module):
-    def resnet_block(self,input_channels, num_channels, num_residuals,
+    def resnet_block(self, input_channels, num_channels, num_residuals,
                     first_block=False):
         blk = []#
         for i in range(num_residuals):
@@ -46,7 +46,7 @@ class ResNet_main(nn.Module):
                 blk.append(Residual(num_channels, num_channels))
         return blk
     
-    def __init__(self,input_channels,tagNum):
+    def __init__(self, input_channels, tagNum):
         super().__init__()
         # print(input_channels,tagNum)
         b1 = nn.Sequential(nn.Conv2d(input_channels, 64, kernel_size=7, stride=2, padding=3),
@@ -62,6 +62,14 @@ class ResNet_main(nn.Module):
 
     def forward(self,x):
         return self.net(x)
+    
+def ResNet_transL(tagNum, only_fc=True):
+    model=torchvision.models.resnet18(weights="IMAGENET1K_V1")
+    if only_fc:
+        for param in model.parameters():
+            param.requires_grad_(False)
+    model.fc = nn.Linear(model.fc.in_features, tagNum, bias=True)
+    return model
 
 
 
