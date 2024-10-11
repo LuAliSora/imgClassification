@@ -1,6 +1,7 @@
 import torch
 from torch.utils import data
 from torch import nn
+import torchvision.datasets as vis_dataset
 
 from func_import import *
 import baseSet
@@ -8,10 +9,12 @@ import baseSet
 def make_dataset():
     pic_rootPath=getData.getDataPath()
     pic_transfm=getData.imgTransfm(baseSet.picSize)
-    picDataset=getData.class_PicDataset(pic_rootPath, pic_transfm)
-    tags=picDataset.getTags()
+    # picDataset=getData.class_PicDataset(pic_rootPath, pic_transfm)
+    # tags=picDataset.getTags()
+    picDataset=vis_dataset.ImageFolder(pic_rootPath,pic_transfm)
+    tags=picDataset.classes
     divideNum=getData.divideDataset(len(picDataset), baseSet.splitRatio)
-    return tags,data.random_split(picDataset, divideNum)
+    return tags, data.random_split(picDataset, divideNum)
 
 def train_main(net, train_iter, test_iter, loss, updater, num_epochs, device):
     for epoch in range(num_epochs):
@@ -37,7 +40,8 @@ def modelSave(epochs,model,optimizer,fileSave="modelSave.pth"):
     print("model_save!")
 
 def main():
-    tags,picDataset= make_dataset()
+    tags, picDataset= make_dataset()
+    print("Tags:",tags)
     train_loader=data.DataLoader(picDataset[0],batch_size=baseSet.batch_size,shuffle=True,num_workers=baseSet.num_workers)
     val_loader=data.DataLoader(picDataset[1],shuffle=True,num_workers=baseSet.num_workers)
     test_loader=data.DataLoader(picDataset[2],num_workers=baseSet.num_workers)
@@ -48,7 +52,7 @@ def main():
     optimizer = torch.optim.Adam(model.parameters(), lr=baseSet.lr, amsgrad=True)
     
     train_main(model,train_loader,val_loader,loss,optimizer,baseSet.num_epochs,baseSet.device)
-    modelSave(baseSet.num_epochs,model,optimizer)
+    # modelSave(baseSet.num_epochs,model,optimizer)
 
 if __name__=="__main__":
     main()

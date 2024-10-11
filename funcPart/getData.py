@@ -41,7 +41,7 @@ def getTagPicPath(tags):
         # print(type(i))
         print(i,tagName,len(tagImgs)) 
     # print(imgs,labels)
-    return imgs,labels
+    return imgs, labels
 
 #通过创建data.Dataset子类Mydataset来创建输入
 class class_PicDataset(data.Dataset):
@@ -55,7 +55,7 @@ class class_PicDataset(data.Dataset):
     def __getitem__(self, index):
         img=Image.open(self.imgPaths[index])
         data=self.transfm(img)
-        return data,self.labels[index]
+        return data, self.labels[index]
     
 # 返回长度
     def __len__(self):
