@@ -17,8 +17,7 @@ def make_dataset():
     tags=picDataset.classes
     divideNum=dataPr.divideDataset(len(picDataset), baseSet.splitRatio)
     # print("DivideNum:",divideNum)
-    dataPr.writeTags(tags)
-    print(f"TagNum:{len(tags)},Tags:{tags}")
+    dataPr.writeTags(tags, baseSet.tagSave)
     return tags, data.random_split(picDataset, divideNum)
 
 def train_main(net, train_iter, test_iter, loss, updater, num_epochs, device, baseEpoch):

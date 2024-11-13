@@ -88,7 +88,8 @@ def modelSave(epochs, model, optimizer, fileSave):
     print("model_save!")
 
 
-def writeTags(tags):
-    with open("tagList.txt", "w",encoding="utf-8") as f_tags:
+def writeTags(tags, savePath):
+    print("TagNum:",len(tags))
+    with open(savePath, "w",encoding="utf-8") as f_tags:
         [f_tags.write(f"{i} {tag}\n") for i, tag in enumerate(tags)]
 
