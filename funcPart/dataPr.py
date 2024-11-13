@@ -91,5 +91,5 @@ def modelSave(epochs, model, optimizer, fileSave):
 def writeTags(tags, savePath):
     print("TagNum:",len(tags))
     with open(savePath, "w",encoding="utf-8") as f_tags:
-        [f_tags.write(f"{i} {tag}\n") for i, tag in enumerate(tags)]
+        [f_tags.write(f"{i}\t{tag}\n") for i, tag in enumerate(tags)]
 
