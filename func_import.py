@@ -16,9 +16,9 @@ def addPart(partList)->None:
 
 addPart(partL)
 
-import getData
+import dataPr
 import ResNet
-import trainF
+
 
 if __name__=="__main__":
     # addPart(partL)

@@ -6,15 +6,19 @@ import torchvision.datasets as vis_dataset
 from func_import import *
 import baseSet
 
+import trainF
+
 def make_dataset():
-    pic_rootPath=getData.getDataPath()
-    pic_transfm=getData.imgTransfm(baseSet.picSize)
-    # picDataset=getData.class_PicDataset(pic_rootPath, pic_transfm)
+    pic_rootPath=dataPr.getDataPath()
+    pic_transfm=dataPr.imgTransfm(baseSet.picSize)
+    # picDataset=dataPr.class_PicDataset(pic_rootPath, pic_transfm)
     # tags=picDataset.getTags()
     picDataset=vis_dataset.ImageFolder(pic_rootPath,pic_transfm)
     tags=picDataset.classes
-    divideNum=getData.divideDataset(len(picDataset), baseSet.splitRatio)
+    divideNum=dataPr.divideDataset(len(picDataset), baseSet.splitRatio)
     # print("DivideNum:",divideNum)
+    dataPr.writeTags(tags)
+    print(f"TagNum:{len(tags)},Tags:{tags}")
     return tags, data.random_split(picDataset, divideNum)
 
 def train_main(net, train_iter, test_iter, loss, updater, num_epochs, device, baseEpoch):
@@ -33,7 +37,7 @@ def train_main(net, train_iter, test_iter, loss, updater, num_epochs, device, ba
 
 def main():
     tags, picDataset= make_dataset()
-    print(f"TagNum:{len(tags)},Tags:{tags}")
+
     train_loader=data.DataLoader(picDataset[0],batch_size=baseSet.batch_size,shuffle=True,num_workers=baseSet.num_workers)
     val_loader=data.DataLoader(picDataset[1],shuffle=True,num_workers=baseSet.num_workers)
     # test_loader=data.DataLoader(picDataset[2],num_workers=baseSet.num_workers)
@@ -41,7 +45,7 @@ def main():
     loss=nn.CrossEntropyLoss()
     model, optimizer, baseEpoch=ResNet.modelLoad(len(tags), baseSet.stateSave, baseSet.device, baseSet.lr)
     train_main(model, train_loader, val_loader, loss,optimizer, baseSet.num_epochs, baseSet.device, baseEpoch)
-    getData.modelSave(baseSet.num_epochs, model, optimizer, baseSet.stateSave)
+    dataPr.modelSave(baseSet.num_epochs, model, optimizer, baseSet.stateSave)
 
 if __name__=="__main__":
     main()
