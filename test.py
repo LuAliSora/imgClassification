@@ -6,6 +6,19 @@ from func_import import *
 import dataPr
 import ResNet
 
+import argparse
+
+def get_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        "--image",
+        type=str,
+        default="imgPred.jpg"
+    )
+    return parser.parse_args()
+
+
 def imgProcess(imgPath):
     imgTransfm=dataPr.imgTransfm(baseSet.picSize)
     imgOri=Image.open(imgPath)
@@ -28,7 +41,9 @@ def predictFunc(tagNum, data):
     return int(pred)
 
 def main():
-    imgPr=imgProcess("img0.jpg")[None,].to(baseSet.device)
+    args=get_args()
+
+    imgPr=imgProcess(f"../{args.image}")[None,].to(baseSet.device)
     # print(imgPr.shape)
     tagDict=tagRead()
     tagIndex=predictFunc(len(tagDict), imgPr)
@@ -37,5 +52,3 @@ def main():
 
 if __name__=="__main__":
     main()
-
-
