@@ -1,9 +1,12 @@
+import torch
 from torch.utils import data
 from pathlib import Path
 
 import torchvision.transforms as vis_trans
 
 from PIL import Image
+
+
 
 def getDataPath():
     tempDir=Path.cwd()
@@ -73,4 +76,12 @@ def divideDataset(total, splitRatio:list):
     return divideNum
     
 
-    
+def modelSave(epochs, model, optimizer, fileSave):
+    torch.save({
+        'epoch': epochs,
+        'model_state': model.state_dict(),
+        'optim_state': optimizer.state_dict(),
+    },
+        fileSave)
+    # print(model.state_dict())
+    print("model_save!")

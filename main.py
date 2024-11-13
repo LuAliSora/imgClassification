@@ -17,9 +17,9 @@ def make_dataset():
     # print("DivideNum:",divideNum)
     return tags, data.random_split(picDataset, divideNum)
 
-def train_main(net, train_iter, test_iter, loss, updater, num_epochs, device):
+def train_main(net, train_iter, test_iter, loss, updater, num_epochs, device, baseEpoch):
     for epoch in range(num_epochs):
-        print("Epoch:",epoch)
+        print("Epoch:", epoch+baseEpoch)
         train_metrics = trainF.train_epoch(net, train_iter, loss, updater,device)
         if(epoch%3==0):
             print("Train_loss,Train_acc:",train_metrics[0],train_metrics[1])
@@ -30,26 +30,6 @@ def train_main(net, train_iter, test_iter, loss, updater, num_epochs, device):
     # assert train_acc <= 1 and train_acc > 0.7, train_acc
     # assert test_acc <= 1 and test_acc > 0.7, test_acc
 
-def modelLoad(tagNum, fileSave=baseSet.stateSave):
-    # model=ResNet.ResNet_main(input_channels=3,tagNum=tagNum).to(baseSet.device)
-    model=ResNet.ResNet_transL(tagNum=tagNum).to(baseSet.device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=baseSet.lr, amsgrad=True)
-    if Path(fileSave).is_file():
-        saveState=torch.load(fileSave, weights_only=True)
-        model.load_state_dict(saveState['model_state'])
-        optimizer.load_state_dict(saveState['optim_state'])
-        print("model_load!")
-    return model, optimizer
-
-def modelSave(epochs, model, optimizer, fileSave=baseSet.stateSave):
-    torch.save({
-        'epoch': epochs,
-        'model_state': model.state_dict(),
-        'optim_state': optimizer.state_dict(),
-    },
-        fileSave)
-    # print(model.state_dict())
-    print("model_save!")
 
 def main():
     tags, picDataset= make_dataset()
@@ -59,10 +39,9 @@ def main():
     # test_loader=data.DataLoader(picDataset[2],num_workers=baseSet.num_workers)
     
     loss=nn.CrossEntropyLoss()
-    model, optimizer=modelLoad(len(tags))
-
-    train_main(model, train_loader, val_loader, loss,optimizer, baseSet.num_epochs, baseSet.device)
-    modelSave(baseSet.num_epochs, model,optimizer)
+    model, optimizer, baseEpoch=ResNet.modelLoad(len(tags), baseSet.stateSave, baseSet.device, baseSet.lr)
+    train_main(model, train_loader, val_loader, loss,optimizer, baseSet.num_epochs, baseSet.device, baseEpoch)
+    getData.modelSave(baseSet.num_epochs, model, optimizer, baseSet.stateSave)
 
 if __name__=="__main__":
     main()

@@ -4,6 +4,8 @@ from torch.nn import functional as F
 
 import torchvision
 
+from pathlib import Path
+
 class Residual(nn.Module):  #@save
     def __init__(self, input_channels, num_channels,
                  use_1x1conv=False, strides=1):
@@ -72,6 +74,15 @@ def ResNet_transL(tagNum, only_fc=True):
     return model
 
 
-
-
-
+def modelLoad(tagNum, fileSave, device, lr):
+    # model=ResNet_main(input_channels=3, tagNum=tagNum).to(device)
+    model=ResNet_transL(tagNum=tagNum).to(device)
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr, amsgrad=True)
+    baseEpoch=0
+    if Path(fileSave).is_file():
+        saveState=torch.load(fileSave, weights_only=True)
+        model.load_state_dict(saveState['model_state'])
+        optimizer.load_state_dict(saveState['optim_state'])
+        baseEpoch=saveState["epoch"]
+        print("model_load!")
+    return model, optimizer, baseEpoch
