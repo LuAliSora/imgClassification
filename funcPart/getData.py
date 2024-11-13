@@ -22,7 +22,8 @@ def getDataPath():
     return tempDir
 
 def imgTransfm(picSize):
-    trans = [vis_trans.RandomCrop(picSize,pad_if_needed=True),
+    trans = [vis_trans.Resize(picSize),
+            #  vis_trans.RandomCrop(picSize,pad_if_needed=True),
              vis_trans.RandomHorizontalFlip(),
              vis_trans.RandomVerticalFlip(),
              vis_trans.ToTensor()]
@@ -47,7 +48,8 @@ def getTagPicPath(tags):
 class class_PicDataset(data.Dataset):
 # 类初始化
     def __init__(self, rootPath, transform):
-        self.tags=[tag for tag in rootPath.iterdir() if tag.is_dir()]
+        self.tags=[tagPath for tagPath in rootPath.iterdir() if tagPath.is_dir()]
+        # print("TagPaths:",self.tags)
         self.imgPaths,self.labels=getTagPicPath(self.tags)
         #image transform
         self.transfm=transform
@@ -67,7 +69,7 @@ class class_PicDataset(data.Dataset):
 
 def divideDataset(total, splitRatio:list):
     divideNum=[int(0.1*r*total) for r in splitRatio]
-    divideNum[2]=total-divideNum[0]-divideNum[1]
+    divideNum[-1]=total-sum(divideNum[:-1])
     return divideNum
     
 
