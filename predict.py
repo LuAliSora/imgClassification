@@ -37,7 +37,6 @@ def tagRead():
 def predictFunc(tagNum, data):
     net=ResNet.modelLoad(tagNum, baseSet.stateSave, baseSet.device, 1)[0]
     pred=net(data).argmax(axis=1)
-    print(pred)
     return int(pred)
 
 def main():
