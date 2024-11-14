@@ -52,19 +52,22 @@ def make_dataset():
     dataPr.writeTags(tags, baseSet.tagSave)
     return tags, data.random_split(picDataset, divideNum)
 
-def train_main(net, train_iter, test_iter, loss, updater, num_epochs, device, baseEpoch):
+def train_main(net, train_iter, val_iter, loss, updater, num_epochs, device, baseEpoch):
     for epoch in range(num_epochs):
         print("Epoch:", epoch+baseEpoch)
-        train_metrics = trainF.train_epoch(net, train_iter, loss, updater,device)
+        train_metrics = trainF.train_epoch(net, train_iter, loss, updater, device)
         if(epoch%10==0 or epoch==num_epochs-1):
             print("Train_loss,Train_acc:",train_metrics[0],train_metrics[1])
-            val_acc = trainF.val_main(net, test_iter,device)
+            val_acc = trainF.val_main(net, val_iter, device)
             print("Val_acc:",val_acc)
     # train_loss, train_acc = train_metrics
     # assert train_loss < 0.5, train_loss
     # assert train_acc <= 1 and train_acc > 0.7, train_acc
     # assert test_acc <= 1 and test_acc > 0.7, test_acc
 
+def test_main(net, test_iter, device):
+    test_acc=trainF.val_main(net, test_iter, device)
+    print("Test_acc:",test_acc)
 
 def main():
     args=get_args()
@@ -72,12 +75,13 @@ def main():
 
     train_loader=data.DataLoader(picDataset[0],batch_size=args.batch,shuffle=True,num_workers=args.numWk)
     val_loader=data.DataLoader(picDataset[1],shuffle=True,num_workers=args.numWk)
-    # test_loader=data.DataLoader(picDataset[2],num_workers=args.numWk)
+    test_loader=data.DataLoader(picDataset[2],num_workers=args.numWk)
     
     loss=nn.CrossEntropyLoss()
     model, optimizer, baseEpoch=ResNet.modelLoad(len(tags), baseSet.stateSave, baseSet.device, args.lr)
     train_main(model, train_loader, val_loader, loss, optimizer, args.epoch, baseSet.device, baseEpoch)
-    dataPr.modelSave(args.epoch, model, optimizer, baseSet.stateSave)
+    test_main(model, test_loader, baseSet.device)
+    dataPr.modelSave(baseEpoch+(args.epoch), model, optimizer, baseSet.stateSave)
 
 if __name__=="__main__":
     main()

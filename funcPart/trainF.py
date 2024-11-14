@@ -18,7 +18,7 @@ def val_main(net, data_iter,device):  #@save
     metric = classSet.Accumulator(2)  # 正确预测数、预测总数
     with torch.no_grad():
         for i,data in enumerate(data_iter):#
-            X,y=data[0].to(device),data[1].to(device)
+            X, y=data[0].to(device), data[1].to(device)
             metric.add(accuracy(net(X), y), y.numel())
     return metric[0] / metric[1]
 
