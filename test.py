@@ -35,7 +35,7 @@ def tagRead():
     return tagDict
 
 def predictFunc(tagNum, data):
-    net=ResNet.modelLoad(tagNum, baseSet.stateSave, baseSet.device, baseSet.lr)[0]
+    net=ResNet.modelLoad(tagNum, baseSet.stateSave, baseSet.device, 1)[0]
     pred=net(data).argmax(axis=1)
     return int(pred)
 
@@ -46,6 +46,7 @@ def main():
     # print(imgPr.shape)
     tagDict=tagRead()
     tagIndex=predictFunc(len(tagDict), imgPr)
+
     print(tagDict[str(tagIndex)])
 
 

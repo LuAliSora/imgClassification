@@ -56,7 +56,7 @@ def train_main(net, train_iter, test_iter, loss, updater, num_epochs, device, ba
     for epoch in range(num_epochs):
         print("Epoch:", epoch+baseEpoch)
         train_metrics = trainF.train_epoch(net, train_iter, loss, updater,device)
-        if(epoch%3==0):
+        if(epoch%10==0 or epoch==num_epochs-1):
             print("Train_loss,Train_acc:",train_metrics[0],train_metrics[1])
             val_acc = trainF.val_main(net, test_iter,device)
             print("Val_acc:",val_acc)
