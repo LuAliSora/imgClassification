@@ -1,12 +1,14 @@
 import torch
 from PIL import Image
+
+import argparse
+
 import baseSet
 from func_import import *
 
 import dataPr
 import ResNet
 
-import argparse
 
 def get_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()

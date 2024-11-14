@@ -3,10 +3,42 @@ from torch.utils import data
 from torch import nn
 import torchvision.datasets as vis_dataset
 
+import argparse
+
 from func_import import *
 import baseSet
 
 import trainF
+
+
+def get_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        "--batch",
+        type=int,
+        default=20,
+        help="batch_size"
+    )
+    parser.add_argument(
+        "--numWk",
+        type=int,
+        default=4,
+        help="num_workers"
+    )
+    parser.add_argument(
+        "--lr",
+        type=float,
+        default=0.05
+    )
+    parser.add_argument(
+        "--epoch",
+        type=int,
+        default=37
+    )
+    # print(parser.parse_args())
+    return parser.parse_args()
+
 
 def make_dataset():
     pic_rootPath=dataPr.getDataPath()
@@ -35,16 +67,17 @@ def train_main(net, train_iter, test_iter, loss, updater, num_epochs, device, ba
 
 
 def main():
+    args=get_args()
     tags, picDataset= make_dataset()
 
-    train_loader=data.DataLoader(picDataset[0],batch_size=baseSet.batch_size,shuffle=True,num_workers=baseSet.num_workers)
-    val_loader=data.DataLoader(picDataset[1],shuffle=True,num_workers=baseSet.num_workers)
-    # test_loader=data.DataLoader(picDataset[2],num_workers=baseSet.num_workers)
+    train_loader=data.DataLoader(picDataset[0],batch_size=args.batch,shuffle=True,num_workers=args.numWk)
+    val_loader=data.DataLoader(picDataset[1],shuffle=True,num_workers=args.numWk)
+    # test_loader=data.DataLoader(picDataset[2],num_workers=args.numWk)
     
     loss=nn.CrossEntropyLoss()
-    model, optimizer, baseEpoch=ResNet.modelLoad(len(tags), baseSet.stateSave, baseSet.device, baseSet.lr)
-    train_main(model, train_loader, val_loader, loss,optimizer, baseSet.num_epochs, baseSet.device, baseEpoch)
-    dataPr.modelSave(baseSet.num_epochs, model, optimizer, baseSet.stateSave)
+    model, optimizer, baseEpoch=ResNet.modelLoad(len(tags), baseSet.stateSave, baseSet.device, args.lr)
+    train_main(model, train_loader, val_loader, loss, optimizer, args.epoch, baseSet.device, baseEpoch)
+    dataPr.modelSave(args.epoch, model, optimizer, baseSet.stateSave)
 
 if __name__=="__main__":
     main()
