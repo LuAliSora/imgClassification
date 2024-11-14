@@ -11,11 +11,8 @@ import argparse
 def get_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
 
-    parser.add_argument(
-        "--image",
-        type=str,
-        default="imgPred.jpg"
-    )
+    parser.add_argument("image", type=str)
+    # print(parser.parse_args())
     return parser.parse_args()
 
 
