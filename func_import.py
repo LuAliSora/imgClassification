@@ -1,7 +1,7 @@
 from pathlib import Path
 import sys
 
-partL=['funcPart','ModelPart']
+partL=['funcPart','modelPart']
 
 def addPart(partList)->None:
     tempDir=Path.cwd()
