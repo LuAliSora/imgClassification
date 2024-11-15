@@ -54,9 +54,9 @@ def make_dataset():
 
 def train_main(net, train_iter, val_iter, loss, updater, num_epochs, device, baseEpoch):
     for epoch in range(num_epochs):
-        print("Epoch:", epoch+baseEpoch)
         train_metrics = trainF.train_epoch(net, train_iter, loss, updater, device)
         if(epoch%10==0 or epoch==num_epochs-1):
+            print("Epoch:", epoch+baseEpoch)
             print("Train_loss,Train_acc:",train_metrics[0],train_metrics[1])
             val_acc = trainF.val_main(net, val_iter, device)
             print("Val_acc:",val_acc)
