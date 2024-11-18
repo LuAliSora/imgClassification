@@ -41,7 +41,7 @@ def get_args() -> argparse.Namespace:
 
 
 def make_dataset():
-    pic_rootPath=dataPr.getDataPath()
+    pic_rootPath=dataPr.getDataPath("picFile")
     pic_transfm=dataPr.imgTransfm(baseSet.picSize)
     # picDataset=dataPr.class_PicDataset(pic_rootPath, pic_transfm)
     # tags=picDataset.getTags()
@@ -79,9 +79,9 @@ def main():
     
     loss=nn.CrossEntropyLoss()
     model, optimizer, baseEpoch=ResNet.modelLoad(len(tags), baseSet.stateSave, baseSet.device, args.lr)
-    train_main(model, train_loader, val_loader, loss, optimizer, args.epoch, baseSet.device, baseEpoch)
+    # train_main(model, train_loader, val_loader, loss, optimizer, args.epoch, baseSet.device, baseEpoch)
     test_main(model, test_loader, baseSet.device)
-    dataPr.modelSave(baseEpoch+(args.epoch), model, optimizer, baseSet.stateSave)
+    # dataPr.modelSave(baseEpoch+(args.epoch), model, optimizer, baseSet.stateSave)
 
 if __name__=="__main__":
     main()

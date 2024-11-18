@@ -8,7 +8,7 @@ from PIL import Image
 
 
 
-def getDataPath():
+def getDataPath(folder):
     tempDir=Path.cwd()
     while 1:
         if tempDir.name=='Python0':
@@ -16,7 +16,7 @@ def getDataPath():
         if tempDir==tempDir.parent:
             raise Exception("root_path: Lose!")
         tempDir=tempDir.parent
-    picFiles='crawler_firstTry/picFile'
+    picFiles='crawler_firstTry/'+folder
     tempDir=tempDir/picFiles
     # tempDir=tempDir.joinpath(picAll)
     if tempDir.is_dir()==False:
@@ -85,7 +85,7 @@ def modelSave(epochs, model, optimizer, fileSave):
     },
         fileSave)
     # print(model.state_dict())
-    print("model_save!")
+    print("Model_Save!")
 
 
 def writeTags(tags, savePath):
