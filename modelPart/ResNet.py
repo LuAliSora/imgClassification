@@ -84,5 +84,5 @@ def modelLoad(tagNum, fileSave, device, lr):
         model.load_state_dict(saveState['model_state'])
         optimizer.load_state_dict(saveState['optim_state'])
         baseEpoch=saveState["epoch"]
-        print("model_load!")
+        print("model_load! baseEpoch:",baseEpoch)
     return model, optimizer, baseEpoch
