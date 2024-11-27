@@ -76,7 +76,7 @@ def ResNet_transL(tagNum, only_fc=True):
 
 def modelLoad(tagNum, fileSave, device, lr):
     # model=ResNet_main(input_channels=3, tagNum=tagNum).to(device)
-    model=ResNet_transL(tagNum=tagNum).to(device)
+    model=ResNet_transL(tagNum=tagNum)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr, amsgrad=True)
     baseEpoch=0
     if Path(fileSave).is_file():
@@ -85,4 +85,5 @@ def modelLoad(tagNum, fileSave, device, lr):
         optimizer.load_state_dict(saveState['optim_state'])
         baseEpoch=saveState["epoch"]
         print("Model_Load! BaseEpoch:",baseEpoch)
+    model=model.to(device)
     return model, optimizer, baseEpoch
