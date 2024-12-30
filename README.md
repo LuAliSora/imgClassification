@@ -1,4 +1,4 @@
-# imgclsfy
+# ImgClsfy
     Image Recognition of ResNet based on pytorch
 
 ## To train:
