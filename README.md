@@ -1,4 +1,4 @@
-# crawler_firstTry
+# imgclsfy
     Image Recognition of ResNet based on pytorch
 
 ## To train:
