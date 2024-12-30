@@ -5,7 +5,7 @@
     1. Change the dataset path in "funcPart/dataPr"
     2. Run "py train.py"
 
-## To predic:
+## To predict:
     1. Run "py predict.py {imgName}"
 
 ## Future：
